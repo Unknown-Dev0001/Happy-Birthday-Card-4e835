@@ -16,7 +16,7 @@ if (!process.env.PIC) throw new Error("Please specify PIC in environment.");
 const picPath = process.env.PIC;
 const msgPath = process.env.SCROLL_MSG;
 
-//Local initialization
+// Local initialization
 const setLocalData = async () => {
   try {
     const pic = path.join(__dirname, "../local/", picPath);
@@ -30,36 +30,58 @@ const setLocalData = async () => {
     await setPic(pic);
     genIndex(markup);
   } catch (e) {
+    console.error("Error during local init:", e);
     throw new Error(e.message);
   }
 };
 
-//Remote initialization
+// Remote initialization
 const setRemoteData = async () => {
   try {
+    // Download picture from remote URL
     let res = await axios.get(picPath, {
       responseType: "arraybuffer",
     });
     const pic = res.data;
     let markup = "";
+
+    // If SCROLL_MSG (Telegraph link or slug) is provided
     if (msgPath) {
       const article = msgPath.split("/").pop();
+
       res = await axios.get(
         `https://api.telegra.ph/getPage/${article}?return_content=true`
       );
-      const { content } = res.data.result;
+
+      const result = res?.data?.result;
+
+      if (!result || !result.content) {
+        console.error("❌ Telegraph API response missing content:");
+        console.error(JSON.stringify(res.data, null, 2));
+        throw new Error("Telegraph page content is missing or invalid.");
+      }
+
+      const { content } = result;
+
       markup = content.reduce(
         (string, node) => string + generateMarkupRemote(node),
         ""
       );
     }
+
     await setPic(pic);
     genIndex(markup);
   } catch (e) {
+    console.error("❌ Error during remote init:", e);
     throw new Error(e.message);
   }
 };
 
-if (process.argv[2] === "--local") setLocalData();
-else if (process.argv[2] === "--remote") setRemoteData();
-else console.log("Fetch mode not specified.");
+// Run the appropriate mode
+if (process.argv[2] === "--local") {
+  setLocalData();
+} else if (process.argv[2] === "--remote") {
+  setRemoteData();
+} else {
+  console.log("⚠️ Fetch mode not specified. Use '--local' or '--remote'.");
+}
