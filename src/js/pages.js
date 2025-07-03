@@ -1,11 +1,10 @@
 export const soon = {
   title: "Come Back Later...",
   body: `<br />
-    <h1>Hi, you come to early</h1>
+    <h1>Hi Piyush, you come to early</h1>
     <br /><br /><br />
     <p>
-        I know this page is very interesting for you, especially for your special day but.<br />
-        You need to be patience until the time has come, right ? See you on {{^OPEN_DATE}} ;)
+        bhai {{^OPEN_DATE}} ko aana 😁 patience rakho :)
     </p>`,
 };
 
