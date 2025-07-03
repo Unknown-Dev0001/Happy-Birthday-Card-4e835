@@ -5,7 +5,7 @@ export const soon = {
     <br /><br /><br />
     <p>
         I know this page is very interesting for you, especially for your special day but.<br />
-        You need to be patience until the time has come, right ?
+        You need to be patience until the time has come, right ? See you on {OPEN_DATE} ;)
     </p>`,
 };
 
